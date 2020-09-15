@@ -9,6 +9,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+TEST THAT THIS IS WORKING. HI! - SAM
+
 ## 1 Bodyfat Revisited
 
 ```{r}
