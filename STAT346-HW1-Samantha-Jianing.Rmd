@@ -1,0 +1,123 @@
+---
+title: "HW1"
+author: "Jianing Ren"
+date: "14/09/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1 Bodyfat Revisited
+
+```{r}
+setwd("/Users/rjn/OneDrive/大学/fall_2020/Stat 346/hw1")
+bodyfat=read.delim("https://dasl.datadescription.com/download/data/3079")
+```
+
+### a Creating a Correlation Matrix
+
+```{r}
+cor_mat=cor(bodyfat)
+cor_mat=cor_mat[1:7,1:7]
+```
+
+
+
+### b
+
+```{r}
+lm_waist=lm(Pct.BF~Waist,data=bodyfat)
+plot(Pct.BF~Waist,data=bodyfat)+abline(lm_waist,col="red")
+summary(lm_waist)
+```
+
+From the correlation matrix calculated before, the best regressors other than density which produces the highest absolute correlation coefficient are waist and abdomen, which are the same. 
+
+After building a simple linear model between Pct.BF against Waist size, we see that the positive association is quite strong and the variation around the line is small. In fact, the R^2 value of the model is 0.6772,suggesting the model rather accurately captures the total variance of percent bodyfat. 
+
+
+### c describe the equation
+
+Every one inch increase in waist size is associated with, on average, 1.70% increase in body fat. 
+
+### d model assumptions
+
+```{r}
+par(mfrow=c(2,2))
+plot(Pct.BF~Waist,data=bodyfat)+abline(lm_waist,col="red")
+hist(lm_waist$residuals,main="Histogram of residuals")
+plot(lm_waist$fitted.values,lm_waist$residuals,xlab="Predicted % bodyfat",ylab="Residuals",mai="Residual Plot")
+qqnorm(lm_waist$residuals)
+qqline(lm_waist$residuals)
+```
+
+The scatterplot between Pct.BF and Waist displays a linear relationship, and the residual scatterplot displays no special pattern. The histogram and the Normal QQ plot shows that the residuals are roughtly normally distributed with center around 0. Based on the information we have, we can assume the sample is random and representative of the population. 
+
+### e predict $bf of 38-inch waist
+
+```{r}
+predict(lm_waist, newdata=data.frame(Waist=38))
+```
+
+We predict that, on average, a person with 38 inch of waist will have 21.86% of bodyfat. 
+
+### f Predict the % body fat of a man who has a 72 inch waist.
+
+```{r}
+predict(lm_waist, newdata=data.frame(Waist=72))
+
+```
+
+Based on our model, we would expect on average 79.66% of bodyfat from a person with 72 inch of waist. We are not confident about this because our model is based on observations from about 25-50 inches of waist (as seen from the scatterplot before), and the waist size for which we are predicting here is way out of the scope of the model. This would be an example of extrapolation. 
+
+## 2
+### a
+
+```{r}
+suppressMessages(library("mosaic"))
+set.seed(1000)
+ss=sample(bodyfat,250,replace=T)
+row.names(ss)
+```
+
+### b
+```{r}
+lm.b=lm(Pct.BF~Waist,data=ss)
+coef(lm.b)
+coef(lm_waist)
+```
+
+As shown side by side with my model in 1b, they aren't quite different from each other. 
+
+### c
+```{r}
+bootmat=matrix(nrow=1000,ncol=4)
+set.seed(1000)
+for (i in 1:1000)
+{
+    ss=sample(bodyfat,250,replace=T)
+    lm.boot=lm(Pct.BF~Waist,data=ss)
+    bootmat[i,]=c(coef(lm.boot),predict(lm.boot, newdata=data.frame(Waist=38)),predict(lm.boot, newdata=data.frame(Waist=72)))
+}
+```
+
+```{r}
+quantile(bootmat[,1],0.025)
+quantile(bootmat[,1],0.975)
+quantile(bootmat[,2],0.025)
+quantile(bootmat[,2],0.975)
+
+confint(lm_waist)
+```
+
+The bootstrap confidence interval for intercept is between -48.11 and -37.62, and that for the slope is between 1.56 and 1.85. Compared to the output from confint(), we can see that they are pretty similar. 
+
+### d
+```{r}
+hist(bootmat[,3])
+hist(bootmat[,4])
+```
+
+From the histograms of predicted values of 38 and 72 inches of waist, we see that the range for predicted bodyfat of 72 waist is much larger compared to that of 38 waist (approx. )
