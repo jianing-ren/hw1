@@ -120,4 +120,4 @@ hist(bootmat[,3])
 hist(bootmat[,4])
 ```
 
-From the histograms of predicted values of 38 and 72 inches of waist, we see that the range for predicted bodyfat of 72 waist is much larger compared to that of 38 waist (approx. ) s
+From the histograms of predicted values of 38 and 72 inches of waist, we see that the range for predicted bodyfat of 72 waist is much larger compared to that of 38 waist (approx. ) sdfnasdjfnanfan
