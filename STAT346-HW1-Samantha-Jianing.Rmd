@@ -14,7 +14,7 @@ TEST THAT THIS IS WORKING. HI! - SAM
 ## 1 Bodyfat Revisited
 
 ```{r}
-setwd("/Users/rjn/OneDrive/大学/fall_2020/Stat 346/hw1")
+##setwd("/Users/rjn/OneDrive/大学/fall_2020/Stat 346/hw1")
 bodyfat=read.delim("https://dasl.datadescription.com/download/data/3079")
 ```
 
@@ -22,10 +22,9 @@ bodyfat=read.delim("https://dasl.datadescription.com/download/data/3079")
 
 ```{r}
 cor_mat=cor(bodyfat)
-cor_mat=cor_mat[1:7,1:7]
+cor_mat=cor_mat[2:8,2:8]
+cor_mat
 ```
-
-
 
 ### b
 
@@ -37,8 +36,7 @@ summary(lm_waist)
 
 From the correlation matrix calculated before, the best regressors other than density which produces the highest absolute correlation coefficient are waist and abdomen, which are the same. 
 
-After building a simple linear model between Pct.BF against Waist size, we see that the positive association is quite strong and the variation around the line is small. In fact, the R^2 value of the model is 0.6772,suggesting the model rather accurately captures the total variance of percent bodyfat. 
-
+After building a simple linear model between Pct.BF against Waist size, we see that the positive association is quite strong and the variation around the line is small. In fact, the $R^2$ value of the model is 0.68,suggesting the model rather accurately captures the total variance of percent bodyfat. 
 
 ### c describe the equation
 
@@ -57,13 +55,13 @@ qqline(lm_waist$residuals)
 
 The scatterplot between Pct.BF and Waist displays a linear relationship, and the residual scatterplot displays no special pattern. The histogram and the Normal QQ plot shows that the residuals are roughtly normally distributed with center around 0. Based on the information we have, we can assume the sample is random and representative of the population. 
 
-### e predict $bf of 38-inch waist
+### e predict % bf of 38-inch waist
 
 ```{r}
 predict(lm_waist, newdata=data.frame(Waist=38))
 ```
 
-We predict that, on average, a person with 38 inch of waist will have 21.86% of bodyfat. 
+We predict that, on average, a person with 38 inch of waist will have 21.86% bodyfat. 
 
 ### f Predict the % body fat of a man who has a 72 inch waist.
 
@@ -72,7 +70,7 @@ predict(lm_waist, newdata=data.frame(Waist=72))
 
 ```
 
-Based on our model, we would expect on average 79.66% of bodyfat from a person with 72 inch of waist. We are not confident about this because our model is based on observations from about 25-50 inches of waist (as seen from the scatterplot before), and the waist size for which we are predicting here is way out of the scope of the model. This would be an example of extrapolation. 
+Based on our model, we would expect on average 79.66% bodyfat from a person with 72 inch of waist. We are not confident about this because our model is based on observations from about 25-50 inches of waist (as seen from the scatterplot before), and the waist size for which we are predicting here is way out of the scope of the model. This would be an example of extrapolation. 
 
 ## 2
 ### a
@@ -91,7 +89,7 @@ coef(lm.b)
 coef(lm_waist)
 ```
 
-As shown side by side with my model in 1b, they aren't quite different from each other. 
+As shown side by side with my model in 1b, they aren't that different from each other. 
 
 ### c
 ```{r}
@@ -122,7 +120,7 @@ hist(bootmat[,3])
 hist(bootmat[,4])
 ```
 
-From the histograms of predicted values of 38 and 72 inches of waist, we see that the range for predicted bodyfat of 72 waist is much larger compared to that of 38 waist (approx. ) 
+From the histograms of predicted values of 38 and 72 inches of waist, we see that the range for predicted bodyfat of 72 waist is much larger compared to that of 38 waist. This matches our intuition in f. Since we cannot be as confident in our body fat predictions for someone with a 72 inch waist than we are for someone with a 38 inch waist due to our data being concentrated around people with 25-50 inch waists, there has to be a wider range in possible percent body fat for someone with a 72 inch waist.
 
 ## 3
 
@@ -151,3 +149,61 @@ contour(int,slope,sse,nlevel=250)
 locator()
 ```
 
+## 4
+
+### a
+
+```{r}
+bigmac <- read.delim("bigmac.txt")
+```
+
+```{r}
+plot(bigmac$BigMac~bigmac$EngSal, ylab="Price of a BigMac", xlab="Average Engineer's Salary")
+## with(bigmac, scatter.smooth(BigMac~EngSal, pch=19, bty="n", cex=.8))
+```
+
+There doesn't appear to be a linear relationship; there appears to be a decreasing slope. This means that in countries where engineers are paid less on average, bigmacs cost more and in countries where engineers are paid more on average, bigmacs cost less.
+
+### b
+```{r}
+lm.mac <- lm(BigMac~EngSal, data=bigmac)
+par(mfrow=c(2,2))
+plot(bigmac$EngSal, bigmac$BigMac, xlab="Average Engineer's Salary", ylab="Price of BigMac")
+abline(lm.mac, col="red")
+hist(lm.mac$residuals, main="Histogram of Residuals", xlab="Residuals")
+plot(lm.mac$fitted.values, lm.mac$residuals, xlab="Predicted Price of BigMac", ylab="Residuals", main="Residual Plot")
+qqnorm(lm.mac$residuals)
+qqline(lm.mac$residuals)
+```
+
+The linearity assumption is not met because the scatterplot has a curved pattern and the residual plot fans out. Equal variance is not met because the residual plot fans out. Neearnly normal condition is not met because histogram of residuals is skewed to the right.
+
+Errors independence?
+
+### c
+```{r}
+lm.adj <- lm((BigMac)^(-1/2)~EngSal, data=bigmac)
+par(mfrow=c(2,2))
+plot(bigmac$EngSal, (bigmac$BigMac)^(-1/2), xlab="Average Engineer's Salary", ylab="Price of BigMac")
+abline(lm.adj, col="red")
+hist(lm.adj$residuals, main="Histogram of Residuals", xlab="Residuals")
+plot(lm.adj$fitted.values, lm.adj$residuals, xlab="Predicted Price of BigMac", ylab="Residuals", main="Residual Plot")
+qqnorm(lm.adj$residuals)
+qqline(lm.adj$residuals)
+```
+
+### d
+
+```{r}
+predict(lm.mac, newdata=data.frame(EngSal=70000))
+```
+
+The original model predicts that in a city in which the average Engineer's salary is $70,000, the price of a bigmac will be, on average, -$7.54. This is impossible.
+
+### e
+
+```{r}
+predict(lm.adj, newdata=data.frame(EngSal=70000))
+```
+
+17.65^(-1/2)=0.24
