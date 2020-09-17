@@ -176,21 +176,27 @@ qqnorm(lm.mac$residuals)
 qqline(lm.mac$residuals)
 ```
 
-The linearity assumption is not met because the scatterplot has a curved pattern and the residual plot fans out. Equal variance is not met because the residual plot fans out. Neearnly normal condition is not met because histogram of residuals is skewed to the right.
+The linearity assumption is not met because the scatterplot has a curved pattern and the residual plot fans out. Equal variance is not met because the residual plot fans out. Nearnly normal condition is not met because histogram of residuals is skewed to the right.
 
-Errors independence?
+Errors independence is also not met because the residual plot thickens when we increase in predicted price of BigMac.  
 
 ### c
 ```{r}
+library(MASS)
+boxcox(lm.mac)
 lm.adj <- lm((BigMac)^(-1/2)~EngSal, data=bigmac)
 par(mfrow=c(2,2))
-plot(bigmac$EngSal, (bigmac$BigMac)^(-1/2), xlab="Average Engineer's Salary", ylab="Price of BigMac")
+plot(bigmac$EngSal, (bigmac$BigMac)^(-1/2), xlab="Average Engineer's Salary", ylab="Price of BigMac Transformed")
 abline(lm.adj, col="red")
-hist(lm.adj$residuals, main="Histogram of Residuals", xlab="Residuals")
-plot(lm.adj$fitted.values, lm.adj$residuals, xlab="Predicted Price of BigMac", ylab="Residuals", main="Residual Plot")
+hist(lm.adj$residuals, main="Histogram of Residuals", xlab="Transformed Residuals")
+plot(lm.adj$fitted.values, lm.adj$residuals, xlab="Predicted Price of BigMac (Transformed)", ylab="Residuals", main="Residual Plot")
 qqnorm(lm.adj$residuals)
 qqline(lm.adj$residuals)
 ```
+
+Using the Box Cox transformation, we decided to take the negative square root for Bigmac prices. After the transformation, the association looks roughtly linear and the residuals look closer to being normal (as seen from the histogram and the QQ plot).Also, the residual plot doesn't show any special pattern now: specifically, it doesn't get thicken as we increase in predicted Bigmac price. After the transformation, we think that the assumptions for linear regression are better met compared to the original model. 
+
+In addition, we also tried -2/3 and -1 as the power of transformation, and both transformations will cause the residuals to deviate from normal. 
 
 ### d
 
@@ -206,4 +212,4 @@ The original model predicts that in a city in which the average Engineer's salar
 predict(lm.adj, newdata=data.frame(EngSal=70000))
 ```
 
-17.65^(-1/2)=0.24
+17.65^(-1/2)=0.24. We expect that a city with average engineer salary of 70000 will have, on average, a negive square root of big mac price of 0.24. 
