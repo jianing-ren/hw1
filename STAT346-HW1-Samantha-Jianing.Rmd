@@ -82,6 +82,8 @@ ss=sample(bodyfat,250,replace=T)
 row.names(ss)
 ```
 
+29.1 means that this is the second time that row 29 in the bodyfat data was picked for our bootstrap sample. The first time the row was picked from the bodyfat data, the row number in the bootstrap data was 29. The second time it was picked from the bodyfat data, the row number in the boostrap data was 29.1.
+
 ### b
 ```{r}
 lm.b=lm(Pct.BF~Waist,data=ss)
@@ -146,8 +148,9 @@ for (i in 1:100)
 }
 
 contour(int,slope,sse,nlevel=250)
-locator()
 ```
+
+When we clicked on points on the contour map using the locator, the closest we got to the actual least squares solution was an intercept of -42.919 and a slope of 1.710. This is pretty close to the intercept of -42.73 and a slope of 1.70 found with the least squares solution.
 
 ## 4
 
@@ -212,4 +215,5 @@ The original model predicts that in a city in which the average Engineer's salar
 predict(lm.adj, newdata=data.frame(EngSal=70000))
 ```
 
-17.65^(-1/2)=0.24. We expect that a city with average engineer salary of 70000 will have, on average, a negive square root of big mac price of 0.24. 
+17.66^(-1/2)=0.238. 
+We expect that a city with average engineer salary of $70,000 will have bigmacs that cost, on average, $17.66. 
