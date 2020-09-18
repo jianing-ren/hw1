@@ -216,4 +216,4 @@ predict(lm.adj, newdata=data.frame(EngSal=70000))
 ```
 
 17.66^(-1/2)=0.238. 
-We expect that a city with average engineer salary of $70,000 will have bigmacs that cost, on average, $17.66. 
+We expect that a city with average engineer salary of \$ 70,000 will have bigmacs that cost, on average, \$ 17.66. 
